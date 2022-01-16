@@ -36,6 +36,7 @@ def getUserOption(key=None, default=None):
         return userOption[key]
     else:
         return default
+gc = getUserOption
 
 
 lastVersion = getUserOption(version, 0)
