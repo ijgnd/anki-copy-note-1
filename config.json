@@ -1,5 +1,5 @@
 {
-  "Basic Mode: Always use config presets": true,
+  "Basic Mode: Always use config presets": false,
   "Shortcut: copy":"Ctrl+C",
   
   "Preserve creation time" : true,
@@ -7,6 +7,61 @@
   "Copy log": true,
 
   "correct import": true,
+
+  "menu_use_alternative_keys_for_navigation":true,
+  "menu_keyalt_for_arrow_down": "j",
+  "menu_keyalt_for_arrow_up": "k",
+  "menu_keyalt_for_arrow_left": "h",
+  "menu_keyalt_for_arrow_right": "l",
+  "menu_keyalt_for_return": "space",
+  "quicksets": 
+      [
+        {
+            "label": "empty before ...",
+            "shortcut": "",
+            "keep-note-type": true,
+            "keepContent": false,
+            "keepCreationTime": "before",
+            "keepIvlEtc": false,
+            "keepLog": false
+        },
+        {
+            "label": "empty before (and select model)",
+            "shortcut": "",
+            "keep-note-type": false,
+            "keepContent": false,
+            "keepCreationTime": "before",
+            "keepIvlEtc": false,
+            "keepLog": false
+        },
+        {
+            "label": "empty after ...",
+            "shortcut": "",
+            "keep-note-type": true,
+            "keepContent": false,
+            "keepCreationTime": "after",
+            "keepIvlEtc": false,
+            "keepLog": false
+        },
+        {
+            "label": "duplicate - creation time is now",
+            "shortcut": "Ctrl+Shift+ä",
+            "keep-note-type": true,
+            "keepContent": true,
+            "keepCreationTime": false,
+            "keepIvlEtc": false,
+            "keepLog": false
+        },
+        {
+            "label": "duplicate - preserve creation time ...",
+            "shortcut": "Ctrl+Alt+ä",
+            "keep-note-type": true,
+            "keepContent": true,
+            "keepCreationTime": "after",
+            "keepIvlEtc": true,
+            "keepLog": true
+          }
+  ],
   
   "relate: tag prefix - current": "relation_",
   "relate: tag prefixes": ["relation_"],
