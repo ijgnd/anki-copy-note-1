@@ -43,6 +43,15 @@ from .time import timestampID
 #import profile
 
 
+def setupMenu(browser):
+    a = QAction("Note Copy", browser)
+    # Shortcut for convenience. Added by Didi
+    a.setShortcut(QKeySequence(getUserOption("Shortcut: copy", "Ctrl+C")))
+    a.triggered.connect(lambda: copyNotes(browser))
+    browser.form.menu_Notes.addSeparator()
+    browser.form.menu_Notes.addAction(a)
+
+
 def copyNotes(browser):
     """
     nids -- id of notes to copy
@@ -58,15 +67,6 @@ def copyNotes(browser):
     mw.reset()
     browser.onSearchActivated()
     tooltip("""Cards copied.""")
-
-
-def setupMenu(browser):
-    a = QAction("Note Copy", browser)
-    # Shortcut for convenience. Added by Didi
-    a.setShortcut(QKeySequence(getUserOption("Shortcut: copy", "Ctrl+C")))
-    a.triggered.connect(lambda: copyNotes(browser))
-    browser.form.menu_Notes.addSeparator()
-    browser.form.menu_Notes.addAction(a)
 
 
 def copyNote(nid):
