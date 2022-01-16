@@ -25,7 +25,6 @@ Recall that an «empty cards» is a card that should be deleted by
 
 
 import anki.notes
-from anki.hooks import addHook
 from aqt import mw
 from aqt.qt import *
 from aqt.utils import tooltip
@@ -35,14 +34,6 @@ from .utils import createRelationTag, getRelationsFromNote
 from .new_note_id import add_note_with_id
 from .time import timestampID
 
-
-def setupMenu(browser):
-    a = QAction("Note Copy", browser)
-    # Shortcut for convenience. Added by Didi
-    a.setShortcut(QKeySequence(getUserOption("Shortcut: copy", "Ctrl+C")))
-    a.triggered.connect(lambda: duplicate_notes(browser))
-    browser.form.menu_Notes.addSeparator()
-    browser.form.menu_Notes.addAction(a)
 
 
 def duplicate_notes(browser):
@@ -115,6 +106,3 @@ def copy_log(data, newCid):
     cid = newCid
     mw.col.db.execute("insert into revlog values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                       id, cid, usn, ease, ivl, lastIvl, factor, time, type)
-
-
-addHook("browser.setupMenus", setupMenu)
