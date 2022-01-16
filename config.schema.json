@@ -29,12 +29,12 @@
       "type": "boolean",
       "default": true
     },
-    "current tag prefix": {
+    "relate: tag prefix - current": {
       "description": "the prefix of tag used to relate note, as in https://ankiweb.net/shared/info/413416269",
       "type": "string",
       "default": "relation_"
     },
-    "tag prefixes": {
+    "relate: tag prefixes": {
       "description":"if a copied note's tag contain a prefix of this list, no prefix will be added. As in https://ankiweb.net/shared/info/413416269",
       "type": "array",
       "items": {
