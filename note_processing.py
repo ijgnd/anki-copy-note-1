@@ -7,9 +7,15 @@
 
 # This add-ons is heavily based on Kealan Hobelmann's addon 396494452
 
+from .config import anki_21_version
+if anki_21_version <= 49:
+    from anki.utils import intTime as int_time
+else:
+    from anki.utils import int_time
+
 
 import anki.notes
-from anki.utils import guid64, int_time
+from anki.utils import guid64
 
 from aqt import mw
 from aqt.qt import *
