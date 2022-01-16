@@ -1,4 +1,5 @@
 {
+  "Basic Mode: Always use config presets": true,
   "Shortcut: copy":"Ctrl+C",
   
   "Preserve creation time" : true,
