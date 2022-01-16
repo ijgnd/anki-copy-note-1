@@ -36,13 +36,10 @@ from .config import getUserOption
 
 
 def duplicate_notes(browser):
-    """
-    nids -- id of notes to copy
-    """
-    nids = browser.selectedNotes()
+    selected_note_ids = browser.selectedNotes()
     mw.checkpoint("Copy Notes")
     mw.progress.start()
-    for nid in nids:
+    for nid in selected_note_ids:
         duplicate_one_note(nid)
     # Reset collection and main window
     mw.progress.finish()
@@ -53,7 +50,7 @@ def duplicate_notes(browser):
 
 
 def duplicate_one_note(nid):
-    note = mw.col.getNote(nid)
+    note = mw.col.get_note(nid)
     old_cards = note.cards()
     old_cards_sorted = sorted(old_cards, key=lambda x: x.ord) # , reverse=True)
     oid = note.id
@@ -71,7 +68,7 @@ def duplicate_one_note(nid):
     for old, new in zip(old_cards_sorted, new_cards_sorted):
         copy_card(old, new)
     
-    note.addTag(getUserOption("tag for copies"))
+    note.add_tag(getUserOption("tag for copies"))
     note.usn = mw.col.usn()
     note.flush()
 
@@ -98,11 +95,11 @@ def copy_card(old_card, new_card):
             copy_log(data, old_card.id)
 
 
-def copy_log(data, newCid):
+def copy_log(data, new_cid):
     id, cid, usn, ease, ivl, lastIvl, factor, time, type = data
     usn = mw.col.usn()
     id = timestampID(mw.col.db, "revlog", t=id)
-    cid = newCid
+    cid = new_cid
     mw.col.db.execute("insert into revlog values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                       id, cid, usn, ease, ivl, lastIvl, factor, time, type)
 
