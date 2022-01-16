@@ -1,1 +1,1 @@
-from . import browser_gui, debug
+from . import browser_gui_basic, debug
