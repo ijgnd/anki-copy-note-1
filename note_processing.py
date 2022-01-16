@@ -122,7 +122,7 @@ def timestampID(db, table, t=None, before=False):
 def getRelationsFromNote(note):
     relations = set()
     for relation in note.tags:
-        for prefix in getUserOption("tag prefixes", ["relation_"]):
+        for prefix in getUserOption("relate: tag prefixes", ["relation_"]):
             if relation.startswith(prefix):
                 relations.add(relation)
                 break
@@ -130,4 +130,4 @@ def getRelationsFromNote(note):
 
 
 def createRelationTag():
-    return f"""{getUserOption("current tag prefix", "relation_")}{intTime(1000)}"""
+    return f"""{getUserOption("relate: tag prefix - current", "relation_")}{intTime(1000)}"""

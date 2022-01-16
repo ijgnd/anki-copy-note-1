@@ -1,11 +1,14 @@
 {
   "Shortcut: copy":"Ctrl+C",
+  
   "Preserve creation time" : true,
   "Preserve ease, due, interval...": true,
   "Copy log": true,
+
   "correct import": true,
-  "current tag prefix": "relation_",
-  "tag prefixes": ["relation_"],
+  
+  "relate: tag prefix - current": "relation_",
+  "relate: tag prefixes": ["relation_"],
   "relate copies": false,
   "tag for copies": "Copy"
 }
