@@ -9,7 +9,7 @@
 
 
 import anki.notes
-from anki.utils import guid64, intTime
+from anki.utils import guid64, int_time
 
 from aqt import mw
 from aqt.qt import *
@@ -110,7 +110,7 @@ def timestampID(db, table, t=None, before=False):
     "Return a non-conflicting timestamp for table."
     # be careful not to create multiple objects without flushing them, or they
     # may share an ID.
-    t = t or intTime(1000)
+    t = t or int_time(1000)
     while db.scalar("select id from %s where id = ?" % table, t):
         if before:
             t -= 1
@@ -130,4 +130,4 @@ def getRelationsFromNote(note):
 
 
 def createRelationTag():
-    return f"""{getUserOption("relate: tag prefix - current", "relation_")}{intTime(1000)}"""
+    return f"""{getUserOption("relate: tag prefix - current", "relation_")}{int_time(1000)}"""
