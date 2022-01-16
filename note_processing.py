@@ -23,17 +23,16 @@ Recall that an «empty cards» is a card that should be deleted by
 «check empty card».
 """
 
+from typing import Optional
 
 import anki.notes
+from anki.utils import guid64, intTime
+
 from aqt import mw
 from aqt.qt import *
 from aqt.utils import tooltip
 
 from .config import getUserOption
-from .utils import createRelationTag, getRelationsFromNote
-from .new_note_id import add_note_with_id
-from .time import timestampID
-
 
 
 def duplicate_notes(browser):
@@ -106,3 +105,47 @@ def copy_log(data, newCid):
     cid = newCid
     mw.col.db.execute("insert into revlog values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                       id, cid, usn, ease, ivl, lastIvl, factor, time, type)
+
+
+def add_note_with_id(old_note, id: Optional[int]= None):
+    """Add a note, in the db with unique guid, and id as close as id possible, (now if id=None), without card."""
+    note = mw.col.new_note(mw.col.models.get(old_note.mid))
+    note.fields = old_note.fields
+    mw.col.add_note(note, 1)
+    new_id = timestampID(note.col.db, "notes", id)
+    cards_for_new_note = note.cards()
+    mw.col.db.execute("""
+    update notes
+    set id=?
+    where id=?
+    """, new_id, note.id)
+    for c in cards_for_new_note:
+        c.nid = new_id
+        c.usn = mw.col.usn()
+        c.flush()
+    note.id = new_id
+    return note, cards_for_new_note
+
+
+def timestampID(db, table, t=None):
+    "Return a non-conflicting timestamp for table."
+    # be careful not to create multiple objects without flushing them, or they
+    # may share an ID.
+    t = t or intTime(1000)
+    while db.scalar("select id from %s where id = ?" % table, t):
+        t += 1
+    return t
+
+
+def getRelationsFromNote(note):
+    relations = set()
+    for relation in note.tags:
+        for prefix in getUserOption("tag prefixes", ["relation_"]):
+            if relation.startswith(prefix):
+                relations.add(relation)
+                break
+    return relations
+
+
+def createRelationTag():
+    return f"""{getUserOption("current tag prefix", "relation_")}{intTime(1000)}"""
