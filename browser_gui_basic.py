@@ -10,7 +10,10 @@ def setupMenu(browser):
     a = QAction("Note Copy", browser)
     # Shortcut for convenience. Added by Didi
     a.setShortcut(QKeySequence(getUserOption("Shortcut: copy", "Ctrl+C")))
-    a.triggered.connect(lambda: duplicate_notes(browser))
+    keepCreationTime = getUserOption("Preserve creation time", True)
+    keepLog = getUserOption("Copy log", True)
+    keepIvlEtc = getUserOption("Preserve ease, due, interval...", True)
+    a.triggered.connect(lambda: duplicate_notes(browser, keepCreationTime, keepIvlEtc, keepLog))
     browser.form.menu_Notes.addSeparator()
     browser.form.menu_Notes.addAction(a)
 addHook("browser.setupMenus", setupMenu)

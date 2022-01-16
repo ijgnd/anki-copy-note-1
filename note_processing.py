@@ -20,12 +20,12 @@ from aqt.utils import tooltip
 from .config import getUserOption
 
 
-def duplicate_notes(browser):
+def duplicate_notes(browser, keepCreationTime, keepIvlEtc, keepLog):
     selected_note_ids = browser.selectedNotes()
     mw.checkpoint("Copy Notes")
     mw.progress.start()
     for nid in selected_note_ids:
-        duplicate_one_note(nid)
+        duplicate_one_note(nid, keepCreationTime, keepIvlEtc, keepLog)
     # Reset collection and main window
     mw.progress.finish()
     mw.col.reset()
@@ -34,13 +34,12 @@ def duplicate_notes(browser):
     tooltip("""Notes copied.""")
 
 
-def duplicate_one_note(nid):
+def duplicate_one_note(nid, keepCreationTime, keepIvlEtc, keepLog):
     note = mw.col.get_note(nid)
     old_cards = note.cards()
     old_cards_sorted = sorted(old_cards, key=lambda x: x.ord) # , reverse=True)
-    oid = note.id
 
-    new_note, new_cards = add_note_with_id(note, nid if getUserOption("Preserve creation time", True) else None)
+    new_note, new_cards = add_note_with_id(note, nid if keepCreationTime else None)
     new_cards_sorted = sorted(new_cards, key=lambda x: x.ord) # , reverse=True)
     
     note.id = new_note.id
@@ -51,19 +50,19 @@ def duplicate_one_note(nid):
             note.addTag(createRelationTag())
             note.flush()
     for old, new in zip(old_cards_sorted, new_cards_sorted):
-        copy_card(old, new)
+        copy_card(old, new, keepIvlEtc, keepLog)
     
     note.add_tag(getUserOption("tag for copies"))
     note.usn = mw.col.usn()
     note.flush()
 
 
-def copy_card(old_card, new_card):
+def copy_card(old_card, new_card, keepIvlEtc, keepLog):
     oid = old_card.id
     # Setting id to 0 is Card is seen as new; which lead to a different process in backend
     old_card.id = new_card.id
     # new_cid = timestampID(note.col.db, "cards", oid)
-    if not getUserOption("Preserve ease, due, interval...", True):
+    if not keepIvlEtc:
         old_card.type = 0
         old_card.ivl = 0
         old_card.factor = 0
@@ -75,7 +74,7 @@ def copy_card(old_card, new_card):
     old_card.usn = mw.col.usn()
     old_card.flush()
     # I don't care about the card creation time
-    if getUserOption("Copy log", True):
+    if keepLog:
         for data in mw.col.db.all("select * from revlog where cid = ?", oid):
             copy_log(data, old_card.id)
 
