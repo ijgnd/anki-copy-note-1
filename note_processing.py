@@ -29,7 +29,7 @@ def duplicate_notes(browser, keepCreationTime, keepIvlEtc, keepLog):
     mw.col.reset()
     mw.reset()
     browser.onSearchActivated()
-    tooltip("""Notes copied.""")
+    tooltip("""Notes copied/duplicated.""")
 
 
 def duplicate_one_note(nid, keepCreationTime, keepIvlEtc, keepLog):
