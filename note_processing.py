@@ -8,8 +8,6 @@
 # This add-ons is heavily based on Kealan Hobelmann's addon 396494452
 
 
-from typing import Optional
-
 import anki.notes
 from anki.utils import guid64, intTime
 
@@ -39,7 +37,7 @@ def duplicate_one_note(nid, keepCreationTime, keepIvlEtc, keepLog):
     old_cards = note.cards()
     old_cards_sorted = sorted(old_cards, key=lambda x: x.ord) # , reverse=True)
 
-    new_note, new_cards = add_note_with_id(note, nid if keepCreationTime else None)
+    new_note, new_cards = add_note_with_id(note, keepCreationTime)
     new_cards_sorted = sorted(new_cards, key=lambda x: x.ord) # , reverse=True)
     
     note.id = new_note.id
@@ -88,12 +86,12 @@ def copy_log(data, new_cid):
                       id, cid, usn, ease, ivl, lastIvl, factor, time, type)
 
 
-def add_note_with_id(old_note, id: Optional[int]= None):
+def add_note_with_id(old_note, keepCreationTime):
     """Add a note, in the db with unique guid, and id as close as id possible, (now if id=None), without card."""
     note = mw.col.new_note(mw.col.models.get(old_note.mid))
     note.fields = old_note.fields
     mw.col.add_note(note, 1)
-    new_id = timestampID(note.col.db, "notes", id)
+    new_id = timestampID(note.col.db, "notes", old_note.id if keepCreationTime else None, True if keepCreationTime == "before" else False)
     cards_for_new_note = note.cards()
     mw.col.db.execute("""
     update notes
