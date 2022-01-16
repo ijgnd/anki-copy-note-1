@@ -23,36 +23,29 @@ Recall that an «empty cards» is a card that should be deleted by
 «check empty card».
 """
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
 
 import anki.notes
 from anki.hooks import addHook
-from anki.importing.anki2 import Anki2Importer
-from anki.lang import _
-from anki.utils import guid64
 from aqt import mw
-from aqt.utils import showWarning, tooltip
+from aqt.qt import *
+from aqt.utils import tooltip
 
 from .config import getUserOption
 from .utils import createRelationTag, getRelationsFromNote
 from .new_note_id import add_note_with_id
 from .time import timestampID
 
-#import profile
-
 
 def setupMenu(browser):
     a = QAction("Note Copy", browser)
     # Shortcut for convenience. Added by Didi
     a.setShortcut(QKeySequence(getUserOption("Shortcut: copy", "Ctrl+C")))
-    a.triggered.connect(lambda: copyNotes(browser))
+    a.triggered.connect(lambda: duplicate_notes(browser))
     browser.form.menu_Notes.addSeparator()
     browser.form.menu_Notes.addAction(a)
 
 
-def copyNotes(browser):
+def duplicate_notes(browser):
     """
     nids -- id of notes to copy
     """
@@ -60,16 +53,16 @@ def copyNotes(browser):
     mw.checkpoint("Copy Notes")
     mw.progress.start()
     for nid in nids:
-        copyNote(nid)
+        duplicate_one_note(nid)
     # Reset collection and main window
     mw.progress.finish()
     mw.col.reset()
     mw.reset()
     browser.onSearchActivated()
-    tooltip("""Cards copied.""")
+    tooltip("""Notes copied.""")
 
 
-def copyNote(nid):
+def duplicate_one_note(nid):
     note = mw.col.getNote(nid)
     old_cards = note.cards()
     old_cards_sorted = sorted(old_cards, key=lambda x: x.ord) # , reverse=True)
@@ -86,14 +79,14 @@ def copyNote(nid):
             note.addTag(createRelationTag())
             note.flush()
     for old, new in zip(old_cards_sorted, new_cards_sorted):
-        copyCard(old, new)
+        copy_card(old, new)
     
     note.addTag(getUserOption("tag for copies"))
     note.usn = mw.col.usn()
     note.flush()
 
 
-def copyCard(old_card, new_card):
+def copy_card(old_card, new_card):
     oid = old_card.id
     # Setting id to 0 is Card is seen as new; which lead to a different process in backend
     old_card.id = new_card.id
@@ -112,10 +105,10 @@ def copyCard(old_card, new_card):
     # I don't care about the card creation time
     if getUserOption("Copy log", True):
         for data in mw.col.db.all("select * from revlog where cid = ?", oid):
-            copyLog(data, old_card.id)
+            copy_log(data, old_card.id)
 
 
-def copyLog(data, newCid):
+def copy_log(data, newCid):
     id, cid, usn, ease, ivl, lastIvl, factor, time, type = data
     usn = mw.col.usn()
     id = timestampID(mw.col.db, "revlog", t=id)
