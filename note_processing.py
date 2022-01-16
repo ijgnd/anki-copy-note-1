@@ -109,13 +109,16 @@ def add_note_with_id(old_note, id: Optional[int]= None):
     return note, cards_for_new_note
 
 
-def timestampID(db, table, t=None):
+def timestampID(db, table, t=None, before=False):
     "Return a non-conflicting timestamp for table."
     # be careful not to create multiple objects without flushing them, or they
     # may share an ID.
     t = t or intTime(1000)
     while db.scalar("select id from %s where id = ?" % table, t):
-        t += 1
+        if before:
+            t -= 1
+        else:
+            t += 1
     return t
 
 
